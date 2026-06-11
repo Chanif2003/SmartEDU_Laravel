@@ -80,8 +80,20 @@ class DashboardRepository implements DashboardRepositoryInterface
         }
 
         // 4. Today Schedules
+        $dayNameEn = now()->format('l');
+        $dayMap = [
+            'Sunday' => 'Minggu',
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+        ];
+        $dayName = $dayMap[$dayNameEn];
+
         $todaysSchedules = Schedule::with(['teacher', 'schoolClass', 'subject', 'timeSlot'])
-            ->where('day', $today)
+            ->where('day', $dayName)
             ->get()
             ->sortBy(function ($s) {
                 return $s->timeSlot->start_time ?? '00:00:00';
@@ -98,10 +110,16 @@ class DashboardRepository implements DashboardRepositoryInterface
             })->values()->toArray();
 
         // 5. Teacher Presence Today
-        // Mock absent/present teachers
-        $teachers = Teacher::take(5)->get();
-        $presentTeachers = $teachers->take(3)->values()->toArray();
-        $absentTeachers = $teachers->skip(3)->values()->toArray();
+        $todayStr = now()->toDateString();
+        $allTeachers = Teacher::all();
+        $presentTeacherIds = \App\Models\PresenceRecord::where('date', $todayStr)
+            ->where('person_type', Teacher::class)
+            ->whereNotNull('status_in')
+            ->pluck('person_id')
+            ->toArray();
+
+        $presentTeachers = $allTeachers->whereIn('id', $presentTeacherIds)->values()->toArray();
+        $absentTeachers = $allTeachers->whereNotIn('id', $presentTeacherIds)->values()->toArray();
 
         $majors = \App\Models\Major::with(['students' => function($q) {
             $q->select('id', 'major_id', 'created_at');

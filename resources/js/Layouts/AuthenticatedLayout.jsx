@@ -65,6 +65,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="pt-6">
                         <div className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] px-3 mb-4">Sistem Server</div>
                         <NavItem href={route('admin.settings.whatsapp.index')} active={route().current('admin.settings.whatsapp.*')} label="Server WhatsApp" icon={Settings} />
+                        <NavItem href={route('admin.settings.database.index')} active={route().current('admin.settings.database.*')} label="Database" icon={Database} />
                     </div>
                     <div className="pt-6">
                         <div className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] px-3 mb-4">Alumni & Kelulusan</div>

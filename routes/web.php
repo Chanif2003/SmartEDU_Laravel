@@ -114,6 +114,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/logout', [\App\Http\Controllers\Admin\Settings\WhatsAppController::class, 'logout'])->name('logout');
     });
 
+    // Admin Settings - Database
+    Route::middleware('role:admin')->prefix('admin/settings/database')->name('admin.settings.database.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\Settings\DatabaseController::class, 'index'])->name('index');
+        Route::get('/export', [\App\Http\Controllers\Admin\Settings\DatabaseController::class, 'export'])->name('export');
+        Route::post('/import', [\App\Http\Controllers\Admin\Settings\DatabaseController::class, 'import'])->name('import');
+        Route::post('/reset', [\App\Http\Controllers\Admin\Settings\DatabaseController::class, 'reset'])->name('reset');
+    });
+
     // Student Portal Routes
     Route::middleware('role:student')->prefix('student')->name('student.')->group(function () {
         Route::get('schedules', [\App\Http\Controllers\Student\ScheduleController::class, 'index'])->name('schedules.index');
